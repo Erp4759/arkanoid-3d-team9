@@ -43,13 +43,57 @@ void CSphere::draw(IDirect3DDevice9* pDevice, const D3DXMATRIX& mWorld)
     if (m_pSphereMesh) m_pSphereMesh->DrawSubset(0);
 }
 
-bool CSphere::hasIntersected(CSphere& /*ball*/)
+bool CSphere::hasIntersected(CSphere& ball)
 {
-    return false;
+    D3DXVECTOR3 myCenter = this->getCenter();
+    D3DXVECTOR3 ballCenter = ball.getCenter();
+    
+    float dx = myCenter.x - ballCenter.x;
+    float dy = myCenter.y - ballCenter.y;
+    float dz = myCenter.z - ballCenter.z;
+    float distance = sqrt(dx*dx + dy*dy + dz*dz);
+    
+    return (distance < (this->getRadius() + ball.getRadius()));
 }
 
-void CSphere::hitBy(CSphere& /*ball*/)
+void CSphere::hitBy(CSphere& ball)
 {
+    if (!hasIntersected(ball)) return;
+    
+    D3DXVECTOR3 myCenter = this->getCenter();
+    D3DXVECTOR3 ballCenter = ball.getCenter();
+    
+    // Collision normal (from ball to this)
+    float dx = myCenter.x - ballCenter.x;
+    float dz = myCenter.z - ballCenter.z;
+    float distance = sqrt(dx*dx + dz*dz);
+    
+    if (distance < 0.001f) return; // Too close, skip
+    
+    // Normalize
+    dx /= distance;
+    dz /= distance;
+    
+    // Reflect ball's velocity
+    float ballVx = (float)ball.getVelocity_X();
+    float ballVz = (float)ball.getVelocity_Z();
+    
+    // Dot product
+    float dot = ballVx * dx + ballVz * dz;
+    
+    // Reflect
+    float newVx = ballVx - 2 * dot * dx;
+    float newVz = ballVz - 2 * dot * dz;
+    
+    ball.setPower(newVx, newVz);
+    
+    // Separate balls to prevent sticking
+    float overlap = (this->getRadius() + ball.getRadius()) - distance;
+    if (overlap > 0) {
+        ballCenter.x -= dx * overlap * 0.5f;
+        ballCenter.z -= dz * overlap * 0.5f;
+        ball.setCenter(ballCenter.x, ballCenter.y, ballCenter.z);
+    }
 }
 
 void CSphere::ballUpdate(float timeDiff)

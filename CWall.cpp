@@ -1,5 +1,6 @@
 #include "CWall.h"
 #include "CSphere.h"
+#include <cmath>
 
 CWall::CWall(void)
 {
@@ -37,13 +38,82 @@ void CWall::draw(IDirect3DDevice9* pDevice, const D3DXMATRIX& mWorld)
     if (m_pBoundMesh) m_pBoundMesh->DrawSubset(0);
 }
 
-bool CWall::hasIntersected(CSphere& /*ball*/)
+bool CWall::hasIntersected(CSphere& ball)
 {
-    return false;
+    D3DXVECTOR3 ballCenter = ball.getCenter();
+    float radius = ball.getRadius();
+    
+    // Calculate wall boundaries
+    float minX = m_x - m_width/2.0f;
+    float maxX = m_x + m_width/2.0f;
+    float minZ = m_z - m_depth/2.0f;
+    float maxZ = m_z + m_depth/2.0f;
+    
+    // Find closest point on wall to ball
+    float closestX = ballCenter.x;
+    float closestZ = ballCenter.z;
+    
+    if (closestX < minX) closestX = minX;
+    if (closestX > maxX) closestX = maxX;
+    if (closestZ < minZ) closestZ = minZ;
+    if (closestZ > maxZ) closestZ = maxZ;
+    
+    // Distance from ball to closest point
+    float dx = ballCenter.x - closestX;
+    float dz = ballCenter.z - closestZ;
+    float distance = sqrt(dx*dx + dz*dz);
+    
+    return (distance < radius);
 }
 
-void CWall::hitBy(CSphere& /*ball*/)
+void CWall::hitBy(CSphere& ball)
 {
+    if (!hasIntersected(ball)) return;
+    
+    D3DXVECTOR3 ballCenter = ball.getCenter();
+    float radius = ball.getRadius();
+    
+    float minX = m_x - m_width/2.0f;
+    float maxX = m_x + m_width/2.0f;
+    float minZ = m_z - m_depth/2.0f;
+    float maxZ = m_z + m_depth/2.0f;
+    
+    double vx = ball.getVelocity_X();
+    double vz = ball.getVelocity_Z();
+    
+    // Determine which face was hit and reflect
+    float overlapLeft = (ballCenter.x + radius) - minX;
+    float overlapRight = maxX - (ballCenter.x - radius);
+    float overlapTop = maxZ - (ballCenter.z - radius);
+    float overlapBottom = (ballCenter.z + radius) - minZ;
+    
+    float minOverlap = overlapLeft;
+    int face = 0; // 0=left, 1=right, 2=top, 3=bottom
+    
+    if (overlapRight < minOverlap) { minOverlap = overlapRight; face = 1; }
+    if (overlapTop < minOverlap) { minOverlap = overlapTop; face = 2; }
+    if (overlapBottom < minOverlap) { minOverlap = overlapBottom; face = 3; }
+    
+    // Reflect velocity based on face and apply damping
+    if (face == 0 || face == 1) {
+        // Hit vertical wall (left or right)
+        ball.setPower(-vx * 0.95, vz);
+        // Push ball out of wall
+        if (face == 0) {
+            ball.setCenter(minX - radius, ballCenter.y, ballCenter.z);
+        } else {
+            ball.setCenter(maxX + radius, ballCenter.y, ballCenter.z);
+        }
+    } else {
+        // Hit horizontal wall (top or bottom)
+        ball.setPower(vx, -vz * 0.95);
+        // Push ball out of wall
+        if (face == 3) {
+            ball.setCenter(ballCenter.x, ballCenter.y, minZ - radius);
+        } else {
+            ball.setCenter(ballCenter.x, ballCenter.y, maxZ + radius);
+        }
+    }
 }
 
 void CWall::setPosition(float x, float y, float z)
