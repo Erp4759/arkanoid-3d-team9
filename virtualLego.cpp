@@ -47,7 +47,7 @@ CWall   g_legowall[4];
 CSphere g_sphere[4];
 CSphere g_target_blueball;
 CLight  g_light;
-
+int ball_speed = 2;
 double g_camera_pos[3] = {0.0, 5.0, -8.0};
 
 // Game state variables
@@ -249,7 +249,7 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                 float offset = ballPos.x - paddlePos.x;
                 float horizontalPower = offset * 1.0f; // Adjust multiplier for more/less angle
                 
-                g_sphere[3].setPower(horizontalPower, 2.5);
+                g_sphere[3].setPower(horizontalPower, ball_speed);
                 g_ballLaunched = true;
             }
             break;

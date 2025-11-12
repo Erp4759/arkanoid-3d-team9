@@ -110,7 +110,7 @@ void CSphere::ballUpdate(float timeDiff)
     } else {
         setPower(0, 0);
     }
-    double rate = 1 - (1 - DECREASE_RATE) * timeDiff * 400;
+    double rate = 1;//1 - (1 - DECREASE_RATE) * timeDiff * 400;
     if (rate < 0) rate = 0;
     setPower(getVelocity_X() * rate, getVelocity_Z() * rate);
 }
