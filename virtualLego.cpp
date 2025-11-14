@@ -27,10 +27,41 @@ IDirect3DDevice9* Device = NULL;
 const int Width  = 1024;
 const int Height = 768;
 
-// There are four balls
-// Arkanoid-like layout: vertical field, three bricks at the top row and one white ball at the bottom center
-const float spherePos[4][2] = { {-2.0f, 3.6f} , {0.0f, 3.6f} , {+2.0f, 3.6f} , {0.0f, -3.6f} }; 
-const D3DXCOLOR sphereColor[4] = {d3d::RED, d3d::RED, d3d::YELLOW, d3d::WHITE};
+//------------------------------------------------------------
+// CONFIGURABLE NUMBER OF BRICKS
+//------------------------------------------------------------
+const int NUM_BRICKS = 6;                    // <--- CHANGE NUMBER OF BRICKS
+const int NUM_SPHERES = NUM_BRICKS + 1;      // (bricks + 1 player ball)
+
+//------------------------------------------------------------
+// Positions of all spheres (bricks + player ball)
+//------------------------------------------------------------
+const float spherePos[NUM_SPHERES][2] =
+{
+    {-2.0f, 3.6f},
+    { 0.0f, 3.6f},
+    { 2.0f, 3.6f},
+    {-2.0f, 2.8f},
+    { 0.0f, 2.8f},
+    { 2.0f, 2.8f},
+
+    { 0.0f, -3.6f }   // player ball
+};
+
+//------------------------------------------------------------
+// Colors of the spheres
+//------------------------------------------------------------
+const D3DXCOLOR sphereColor[NUM_SPHERES] =
+{
+    d3d::RED,
+    d3d::RED,
+    d3d::YELLOW,
+    d3d::BLUE,
+    d3d::GREEN,
+    d3d::BLUE,
+
+    d3d::WHITE      // player ball
+};
 
 // -----------------------------------------------------------------------------
 // Transform matrices
@@ -51,8 +82,8 @@ int ball_speed = 2;
 double g_camera_pos[3] = {0.0, 5.0, -8.0};
 
 // Game state variables
-bool g_brickDestroyed[3] = {false, false, false}; // Track first 3 spheres (bricks)
-int g_activeBricks = 3;
+bool g_brickDestroyed[NUM_BRICKS] = {false};
+int  g_activeBricks = NUM_BRICKS;
 bool g_ballLaunched = false;
 
 // -----------------------------------------------------------------------------
