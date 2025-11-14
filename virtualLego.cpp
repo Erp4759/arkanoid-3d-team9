@@ -16,7 +16,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cassert>
-
+#include <iostream>
 #include "CSphere.h"
 #include "CWall.h"
 #include "CLight.h"
@@ -24,8 +24,8 @@
 IDirect3DDevice9* Device = NULL;
 
 // window size
-const int Width  = 1024;
-const int Height = 768;
+const int Width  = 1024/2;
+const int Height = 768/2;
 
 //------------------------------------------------------------
 // CONFIGURABLE NUMBER OF BRICKS
@@ -187,13 +187,15 @@ bool Display(float timeDelta)
                     g_sphere[i].hitBy(g_sphere[NUM_BRICKS]);
                     g_brickDestroyed[i] = true;
                     g_activeBricks--;
+                    OutputDebugStringA("Destroyed brick\n");
                 }
             }
 
             // ball fell bottom
             D3DXVECTOR3 ballPos = g_sphere[NUM_BRICKS].getCenter();
-            if (ballPos.z < -4.5f)
+            if (ballPos.z < -4.2)
             {
+                OutputDebugStringA("OUT\n");
                 D3DXVECTOR3 p = g_target_blueball.getCenter();
                 g_sphere[NUM_BRICKS].setCenter(p.x, g_sphere[NUM_BRICKS].getRadius(), p.z + 0.5f);
                 g_sphere[NUM_BRICKS].setPower(0, 0);
@@ -273,13 +275,13 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             // Launch white ball with angle based on paddle position
             if (!g_ballLaunched) {
                 D3DXVECTOR3 paddlePos = g_target_blueball.getCenter();
-                D3DXVECTOR3 ballPos = g_sphere[3].getCenter();
+                D3DXVECTOR3 ballPos = g_sphere[NUM_BRICKS].getCenter();
                 
                 // Calculate launch angle based on where ball is on paddle
                 float offset = ballPos.x - paddlePos.x;
                 float horizontalPower = offset * 1.0f; // Adjust multiplier for more/less angle
                 
-                g_sphere[3].setPower(horizontalPower, ball_speed);
+                g_sphere[NUM_BRICKS].setPower(horizontalPower, ball_speed);
                 g_ballLaunched = true;
             }
             break;

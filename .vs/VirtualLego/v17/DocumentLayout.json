@@ -1,9 +1,9 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\tomga\\source\\repos\\arkanoid-3d-team9\\",
+  "WorkspaceRootPath": "C:\\Users\\Vladimir\\source\\repos\\arkanoid-3d-team9\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{C096A731-DE09-4367-869F-DFBAE35AFE1B}|VirtualLego.vcxproj|C:\\Users\\tomga\\source\\repos\\arkanoid-3d-team9\\virtualLego.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{C096A731-DE09-4367-869F-DFBAE35AFE1B}|VirtualLego.vcxproj|C:\\Users\\Vladimir\\source\\repos\\arkanoid-3d-team9\\virtualLego.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{C096A731-DE09-4367-869F-DFBAE35AFE1B}|VirtualLego.vcxproj|solutionrelative:virtualLego.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
@@ -14,27 +14,31 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Bookmark",
-              "Name": "ST:0:0:{d78612c7-9962-4b83-95d9-268046dad23a}"
+              "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
             },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
             },
             {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{d78612c7-9962-4b83-95d9-268046dad23a}"
+            },
+            {
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "virtualLego.cpp",
-              "DocumentMoniker": "C:\\Users\\tomga\\source\\repos\\arkanoid-3d-team9\\virtualLego.cpp",
+              "DocumentMoniker": "C:\\Users\\Vladimir\\source\\repos\\arkanoid-3d-team9\\virtualLego.cpp",
               "RelativeDocumentMoniker": "virtualLego.cpp",
-              "ToolTip": "C:\\Users\\tomga\\source\\repos\\arkanoid-3d-team9\\virtualLego.cpp*",
-              "RelativeToolTip": "virtualLego.cpp*",
-              "ViewState": "AgIAACEAAAAAAAAAAADgvzUAAAAiAAAAAAAAAA==",
+              "ToolTip": "C:\\Users\\Vladimir\\source\\repos\\arkanoid-3d-team9\\virtualLego.cpp",
+              "RelativeToolTip": "virtualLego.cpp",
+              "ViewState": "AgIAAPwAAAAAAAAAAAAkwBUBAAA6AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-11-10T12:07:21.271Z",
+              "WhenOpened": "2025-11-14T07:12:38.288Z",
               "EditorCaption": ""
             }
           ]
