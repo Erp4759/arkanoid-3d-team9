@@ -30,38 +30,120 @@ const int Height = 768;
 //------------------------------------------------------------
 // CONFIGURABLE NUMBER OF BRICKS
 //------------------------------------------------------------
-const int NUM_BRICKS = 6;                   
+const int NUM_BRICKS = 47;                   
 const int NUM_SPHERES = NUM_BRICKS + 1;      // (bricks + 1 player ball)
 
 //------------------------------------------------------------
 // Positions of all spheres (bricks + player ball)
 //------------------------------------------------------------
-const float spherePos[NUM_SPHERES][2] =
-{
-    {-2.0f, 3.6f},
-    { 0.0f, 3.6f},
-    { 2.0f, 3.6f},
-    {-2.0f, 2.8f},
-    { 0.0f, 2.8f},
-    { 2.0f, 2.8f},
 
-    { 0.0f, -3.6f }   // player ball
+float level1Pos[NUM_SPHERES][2] = {
+    // Top
+    {-1.2f,  3.6f}, {-0.8f, 3.6f}, {-0.4f, 3.6f}, {0.0f, 3.6f}, {0.4f, 3.6f}, {0.8f, 3.6f}, {1.2f, 3.6f}, 
+    {-1.6f, 3.2f}, {1.6f, 3.2f},
+
+    // Side
+    {-2.0f, 2.8f}, {-2.0f, 2.4f},{-2.0f, 2.0f},{-2.0f, 1.6f},{-2.0f, 1.2f},{-2.0f, 0.8f},{-2.0f, 0.4f},{-2.0f, 0.0f},{-2.0f, -0.4f},
+    {2.0f, 2.8f}, {2.0f, 2.4f},{2.0f, 2.0f},{2.0f, 1.6f},{2.0f, 1.2f},{2.0f, 0.8f},{2.0f, 0.4f},{2.0f, 0.0f},{2.0f, -0.4f},
+
+    // Bottom
+    {-1.2f,  -1.2f}, {-0.8f, -1.2f}, {-0.4f, -1.2f}, {0.0f, -1.2f}, {0.4f, -1.2f}, {0.8f, -1.2f}, {1.2f, -1.2f},
+    {-1.6f, -0.8f}, {1.6f, -0.8f},
+
+    // Eyes
+    {-1.1f, 2.2f}, {-1.1f, 1.8f},
+    {1.1f, 2.2f},  {1.1f, 1.8f},
+
+    // Nose
+    {0.0f, 1.2f},
+
+    // Smile
+    {-1.0f, 0.0f}, {-0.6f, -0.1f}, {-0.2f, -0.15f},
+    {0.2f, -0.15f}, {0.6f, -0.1f}, {1.0f, 0.0f},
+
+    { 0.0f, -3.6f }
+}; 
+float level2Pos[NUM_SPHERES][2] = { 
+    // --- Centre ---
+    { 0.0f, 1.2f },
+
+    // --- Cercle 1 : rayon 0.5, 8 briques ---
+    { 0.50f, 1.20f },
+    { 0.35f, 1.55f },
+    { 0.00f, 1.70f },
+    { -0.35f, 1.55f },
+    { -0.50f, 1.20f },
+    { -0.35f, 0.85f },
+    { 0.00f, 0.70f },
+    { 0.35f, 0.85f },
+
+    // --- Cercle 2 : rayon 1.0, 14 briques ---
+    { 1.00f, 1.20f },
+    { 0.90f, 1.62f },
+    { 0.62f, 1.98f },
+    { 0.22f, 2.17f },
+    { -0.22f, 2.17f },
+    { -0.62f, 1.98f },
+    { -0.90f, 1.62f },
+    { -1.00f, 1.20f },
+    { -0.90f, 0.78f },
+    { -0.62f, 0.42f },
+    { -0.22f, 0.23f },
+    { 0.22f, 0.23f },
+    { 0.62f, 0.42f },
+    { 0.90f, 0.78f },
+
+    // Cercle 3 : rayon = 1.6 (24 briques)
+    {  1.586f,  0.991f },
+    {  1.586f,  1.409f },
+    {  1.478f,  1.812f },
+    {  1.269f,  2.174f },
+    {  0.974f,  2.469f },
+    {  0.612f,  2.678f },
+    {  0.209f,  2.786f },
+    { -0.209f,  2.786f },
+    { -0.612f,  2.678f },
+    { -0.974f,  2.469f },
+    { -1.269f,  2.174f },
+    { -1.478f,  1.812f },
+    { -1.586f,  1.409f },
+    { -1.586f,  0.991f },
+    { -1.478f,  0.588f },
+    { -1.269f,  0.226f },
+    { -0.974f, -0.069f },
+    { -0.612f, -0.278f },
+    { -0.209f, -0.386f },
+    {  0.209f, -0.386f },
+    {  0.612f, -0.278f },
+    {  0.974f, -0.069f },
+    {  1.269f,  0.226f },
+    {  1.478f,  0.588f },
+
+    { 0.0f, -3.6f }
 };
+float level3Pos[NUM_SPHERES][2] = { {-2.0f, 1.6f}, { 0.0f, 1.6f}, { 2.0f, 1.6f}, {-2.0f, 0.8f}, { 0.0f, 0.8f}, { 2.0f, 0.8f},{ 0.0f, -3.6f } };
+float (*currentLevelPos)[2] = level1Pos;
 
 //------------------------------------------------------------
 // Colors of the spheres
 //------------------------------------------------------------
-const D3DXCOLOR sphereColor[NUM_SPHERES] =
-{
-    d3d::RED,
-    d3d::RED,
-    d3d::YELLOW,
-    d3d::BLUE,
-    d3d::GREEN,
-    d3d::BLUE,
 
-    d3d::WHITE      // player ball
+D3DXCOLOR sphereColorLevel1[NUM_SPHERES] = {
+    d3d::RED, d3d::RED, d3d::RED, d3d::RED, d3d::RED, d3d::RED, d3d::RED, d3d::RED, d3d::RED, d3d::RED,
+    d3d::RED, d3d::RED, d3d::RED, d3d::RED, d3d::RED, d3d::RED, d3d::RED, d3d::RED, d3d::RED, d3d::RED,
+    d3d::RED, d3d::RED, d3d::RED, d3d::RED, d3d::RED, d3d::RED, d3d::RED, d3d::RED, d3d::RED, d3d::RED,
+    d3d::RED, d3d::RED, d3d::RED, d3d::RED, d3d::RED, d3d::RED, d3d::YELLOW, d3d::YELLOW, d3d::YELLOW, d3d::YELLOW,
+    d3d::YELLOW, d3d::YELLOW, d3d::YELLOW, d3d::YELLOW,d3d::YELLOW, d3d::YELLOW, d3d::YELLOW, d3d::WHITE
 };
+D3DXCOLOR sphereColorLevel2[NUM_SPHERES] = {
+   d3d::BLUE, d3d::GREEN, d3d::GREEN, d3d::GREEN, d3d::GREEN, d3d::GREEN, d3d::GREEN, d3d::GREEN, d3d::GREEN,
+   d3d::YELLOW, d3d::YELLOW, d3d::YELLOW, d3d::YELLOW, d3d::YELLOW, d3d::YELLOW, d3d::YELLOW, d3d::YELLOW, d3d::YELLOW, d3d::YELLOW, d3d::YELLOW, d3d::YELLOW, d3d::YELLOW, d3d::YELLOW,
+   d3d::RED, d3d::RED, d3d::RED, d3d::RED, d3d::RED, d3d::RED, d3d::RED, d3d::RED, d3d::RED, d3d::RED, d3d::RED, d3d::RED,
+   d3d::RED, d3d::RED, d3d::RED, d3d::RED, d3d::RED, d3d::RED, d3d::RED, d3d::RED, d3d::RED, d3d::RED, d3d::RED, d3d::RED,
+   d3d::WHITE
+}; 
+D3DXCOLOR sphereColorLevel3[NUM_SPHERES] = { d3d::RED, d3d::RED, d3d::YELLOW, d3d::BLUE, d3d::GREEN, d3d::BLUE, d3d::WHITE };
+D3DXCOLOR *sphereColor = sphereColorLevel1;
 
 // -----------------------------------------------------------------------------
 // Transform matrices
@@ -115,7 +197,7 @@ bool Setup()
     for (i = 0; i < NUM_SPHERES; ++i)
     {
         if (!g_sphere[i].create(Device, sphereColor[i])) return false;
-        g_sphere[i].setCenter(spherePos[i][0], g_sphere[i].getRadius(), spherePos[i][1]);
+        g_sphere[i].setCenter(currentLevelPos[i][0], g_sphere[i].getRadius(), currentLevelPos[i][1]);
         g_sphere[i].setPower(0, 0);
     }
 
@@ -206,7 +288,7 @@ bool Display(float timeDelta)
                 for (int i = 0; i < NUM_BRICKS; ++i)
                 {
                     g_brickDestroyed[i] = false;
-                    g_sphere[i].setCenter(spherePos[i][0], g_sphere[i].getRadius(), spherePos[i][1]);
+                    g_sphere[i].setCenter(currentLevelPos[i][0], g_sphere[i].getRadius(), currentLevelPos[i][1]);
                     g_sphere[i].setPower(0, 0);
                 }
                 g_activeBricks = NUM_BRICKS;
@@ -350,6 +432,29 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 int WINAPI WinMain(HINSTANCE hinstance, HINSTANCE prevInstance, PSTR cmdLine, int showCmd)
 {
     srand(static_cast<unsigned int>(time(NULL)));
+
+    // Ask level with MessageBox
+    int level = 1;
+    int answer = MessageBox(
+        0,
+        "Choose a level:\n\nYes = Level 1\nNo = Level 2\nCancel = Level 3",
+        "Select Difficulty",
+        MB_YESNOCANCEL | MB_ICONQUESTION
+    );
+
+    switch (answer)
+    {
+    case IDYES: level = 1; break;
+    case IDNO: level = 2; break;
+    case IDCANCEL: level = 3; break;
+    default: level = 1; break;
+    }
+    switch (level) {
+    case 1: currentLevelPos = level1Pos; sphereColor = sphereColorLevel1; break;
+    case 2: currentLevelPos = level2Pos; sphereColor = sphereColorLevel2; break;
+    case 3: currentLevelPos = level3Pos; sphereColor = sphereColorLevel3; break;
+    }
+
     if (!d3d::InitD3D(hinstance, Width, Height, true, D3DDEVTYPE_HAL, &Device)) {
         ::MessageBox(0, "InitD3D() - FAILED", 0, 0);
         return 0;
