@@ -121,7 +121,7 @@ float level2Pos[NUM_SPHERES][2] = {
 
     { 0.0f, -3.6f }
 };
-float level3Pos[NUM_SPHERES][2] = { {-2.0f, 1.6f}, { 0.0f, 1.6f}, { 2.0f, 1.6f}, {-2.0f, 0.8f}, { 0.0f, 0.8f}, { 2.0f, 0.8f},{ 0.0f, -3.6f } };
+float level3Pos[NUM_SPHERES][2] = { { 0.0f, 1.6f}, { 2.0f, 1.6f}, {-2.0f, 0.8f}, { 0.0f, 0.8f}, { 2.0f, 0.8f},{ 0.0f, -3.6f } };
 float (*currentLevelPos)[2] = level1Pos;
 
 //------------------------------------------------------------
