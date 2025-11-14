@@ -1,8 +1,8 @@
-////////////////////////////////////////////////////////////////////////////////
+﻿////////////////////////////////////////////////////////////////////////////////
 //
 // File: virtualLego.cpp
 //
-// Original Author: ��â�� Chang-hyeon Park, 
+// Original Author: ¹ÚÃ¢Çö Chang-hyeon Park, 
 // Modified by Bong-Soo Sohn and Dong-Jun Kim
 // 
 // Originally programmed for Virtual LEGO. 
@@ -30,7 +30,7 @@ const int Height = 768;
 //------------------------------------------------------------
 // CONFIGURABLE NUMBER OF BRICKS
 //------------------------------------------------------------
-const int NUM_BRICKS = 6;                    // <--- CHANGE NUMBER OF BRICKS
+const int NUM_BRICKS = 6;                   
 const int NUM_SPHERES = NUM_BRICKS + 1;      // (bricks + 1 player ball)
 
 //------------------------------------------------------------
@@ -75,7 +75,7 @@ D3DXMATRIX g_mProj;
 // -----------------------------------------------------------------------------
 CWall   g_legoPlane;
 CWall   g_legowall[4];
-CSphere g_sphere[4];
+CSphere g_sphere[NUM_SPHERES];
 CSphere g_target_blueball;
 CLight  g_light;
 int ball_speed = 2;
@@ -112,7 +112,8 @@ bool Setup()
     if (!g_legowall[3].create(Device, -1, -1, 0.12f, 0.3f, 9.24f, d3d::DARKRED)) return false; // left
     g_legowall[3].setPosition(-3.06f, 0.12f, 0.0f);
 
-    for (i = 0; i < 4; ++i) {
+    for (i = 0; i < NUM_SPHERES; ++i)
+    {
         if (!g_sphere[i].create(Device, sphereColor[i])) return false;
         g_sphere[i].setCenter(spherePos[i][0], g_sphere[i].getRadius(), spherePos[i][1]);
         g_sphere[i].setPower(0, 0);
@@ -168,75 +169,73 @@ bool Display(float timeDelta)
 
         // Update ball physics only if launched
         if (g_ballLaunched) {
-            g_sphere[3].ballUpdate(timeDelta);
-            
-            // Check wall collisions
-            for (int j = 0; j < 4; ++j) {
-                g_legowall[j].hitBy(g_sphere[3]);
-            }
-            
-            // Check paddle collision
-            if (g_target_blueball.hasIntersected(g_sphere[3])) {
-                g_target_blueball.hitBy(g_sphere[3]);
-            }
-            
-            // Check brick collisions
-            for (int i = 0; i < 3; ++i) {
-                if (!g_brickDestroyed[i]) {
-                    if (g_sphere[i].hasIntersected(g_sphere[3])) {
-                        g_sphere[i].hitBy(g_sphere[3]);
-                        g_brickDestroyed[i] = true;
-                        g_activeBricks--;
-                    }
+            g_sphere[NUM_BRICKS].ballUpdate(timeDelta); // last sphere = player ball
+
+            // walls
+            for (int j = 0; j < 4; ++j)
+                g_legowall[j].hitBy(g_sphere[NUM_BRICKS]);
+
+            // paddle
+            if (g_target_blueball.hasIntersected(g_sphere[NUM_BRICKS]))
+                g_target_blueball.hitBy(g_sphere[NUM_BRICKS]);
+
+            // bricks collision
+            for (int i = 0; i < NUM_BRICKS; ++i)
+            {
+                if (!g_brickDestroyed[i] && g_sphere[i].hasIntersected(g_sphere[NUM_BRICKS]))
+                {
+                    g_sphere[i].hitBy(g_sphere[NUM_BRICKS]);
+                    g_brickDestroyed[i] = true;
+                    g_activeBricks--;
                 }
             }
-            
-            // Check if ball fell off bottom
-            D3DXVECTOR3 ballPos = g_sphere[3].getCenter();
-            if (ballPos.z < -4.5f) {
-                // Reset ball to paddle
-                D3DXVECTOR3 paddlePos = g_target_blueball.getCenter();
-                g_sphere[3].setCenter(paddlePos.x, g_sphere[3].getRadius(), paddlePos.z + 0.5f);
-                g_sphere[3].setPower(0, 0);
+
+            // ball fell bottom
+            D3DXVECTOR3 ballPos = g_sphere[NUM_BRICKS].getCenter();
+            if (ballPos.z < -4.5f)
+            {
+                D3DXVECTOR3 p = g_target_blueball.getCenter();
+                g_sphere[NUM_BRICKS].setCenter(p.x, g_sphere[NUM_BRICKS].getRadius(), p.z + 0.5f);
+                g_sphere[NUM_BRICKS].setPower(0, 0);
                 g_ballLaunched = false;
             }
-            
-            // Check if all bricks destroyed - respawn them
-            if (g_activeBricks == 0) {
-                for (int i = 0; i < 3; ++i) {
+
+            // all bricks destroyed → respawn
+            if (g_activeBricks == 0)
+            {
+                for (int i = 0; i < NUM_BRICKS; ++i)
+                {
                     g_brickDestroyed[i] = false;
                     g_sphere[i].setCenter(spherePos[i][0], g_sphere[i].getRadius(), spherePos[i][1]);
                     g_sphere[i].setPower(0, 0);
                 }
-                g_activeBricks = 3;
-                
-                // Reset ball too
-                D3DXVECTOR3 paddlePos = g_target_blueball.getCenter();
-                g_sphere[3].setCenter(paddlePos.x, g_sphere[3].getRadius(), paddlePos.z + 0.5f);
-                g_sphere[3].setPower(0, 0);
+                g_activeBricks = NUM_BRICKS;
+
+                D3DXVECTOR3 p = g_target_blueball.getCenter();
+                g_sphere[NUM_BRICKS].setCenter(p.x, g_sphere[NUM_BRICKS].getRadius(), p.z + 0.5f);
+                g_sphere[NUM_BRICKS].setPower(0, 0);
                 g_ballLaunched = false;
             }
-        } else {
-            // Ball sticks to paddle
-            D3DXVECTOR3 paddlePos = g_target_blueball.getCenter();
-            g_sphere[3].setCenter(paddlePos.x, g_sphere[3].getRadius(), paddlePos.z + 0.5f);
+        }
+        else
+        {
+            // ball sticks to paddle
+            D3DXVECTOR3 p = g_target_blueball.getCenter();
+            g_sphere[NUM_BRICKS].setCenter(p.x, g_sphere[NUM_BRICKS].getRadius(), p.z + 0.5f);
         }
 
-        // Render plane and walls
+        // draw world
         g_legoPlane.draw(Device, g_mWorld);
-        for (int i = 0; i < 4; ++i) {
+        for (int i = 0; i < 4; ++i)
             g_legowall[i].draw(Device, g_mWorld);
-        }
-        
-        // Render bricks (only if not destroyed)
-        for (int i = 0; i < 3; ++i) {
-            if (!g_brickDestroyed[i]) {
+
+        // draw bricks
+        for (int i = 0; i < NUM_BRICKS; ++i)
+            if (!g_brickDestroyed[i])
                 g_sphere[i].draw(Device, g_mWorld);
-            }
-        }
-        
-        // Render player ball and paddle
-        g_sphere[3].draw(Device, g_mWorld);
+
+        // draw player ball + paddle
+        g_sphere[NUM_BRICKS].draw(Device, g_mWorld);
         g_target_blueball.draw(Device, g_mWorld);
         g_light.draw(Device);
 
