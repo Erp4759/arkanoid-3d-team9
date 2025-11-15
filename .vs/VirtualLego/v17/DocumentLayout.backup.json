@@ -18,7 +18,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 5,
           "Children": [
             {
               "$type": "Bookmark",
@@ -33,6 +33,10 @@
               "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
             },
             {
+              "$type": "Bookmark",
+              "Name": "ST:129:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
               "$type": "Document",
               "DocumentIndex": 1,
               "Title": "CSphere.cpp",
@@ -42,8 +46,7 @@
               "RelativeToolTip": "CSphere.cpp",
               "ViewState": "AgIAACcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-11-14T15:25:55.687Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-14T15:25:55.687Z"
             },
             {
               "$type": "Document",
@@ -51,9 +54,9 @@
               "Title": "virtualLego.cpp",
               "DocumentMoniker": "C:\\Users\\tomga\\source\\repos\\arkanoid-3d-team9\\virtualLego.cpp",
               "RelativeDocumentMoniker": "virtualLego.cpp",
-              "ToolTip": "C:\\Users\\tomga\\source\\repos\\arkanoid-3d-team9\\virtualLego.cpp*",
-              "RelativeToolTip": "virtualLego.cpp*",
-              "ViewState": "AgIAAFwAAAAAAAAAAADwv2MAAAAAAAAAAAAAAA==",
+              "ToolTip": "C:\\Users\\tomga\\source\\repos\\arkanoid-3d-team9\\virtualLego.cpp",
+              "RelativeToolTip": "virtualLego.cpp",
+              "ViewState": "AgIAAIUAAAAAAAAAAAAAALAAAABQAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-11-10T12:07:21.271Z",
               "EditorCaption": ""

@@ -64,10 +64,10 @@ float level1Pos[NUM_SPHERES][2] = {
     { 0.0f, -3.6f }
 }; 
 float level2Pos[NUM_SPHERES][2] = { 
-    // --- Centre ---
+    // Center
     { 0.0f, 1.2f },
 
-    // --- Cercle 1 : rayon 0.5, 8 briques ---
+    // Circle 1
     { 0.50f, 1.20f },
     { 0.35f, 1.55f },
     { 0.00f, 1.70f },
@@ -77,7 +77,7 @@ float level2Pos[NUM_SPHERES][2] = {
     { 0.00f, 0.70f },
     { 0.35f, 0.85f },
 
-    // --- Cercle 2 : rayon 1.0, 14 briques ---
+    // Circle 2
     { 1.00f, 1.20f },
     { 0.90f, 1.62f },
     { 0.62f, 1.98f },
@@ -93,7 +93,7 @@ float level2Pos[NUM_SPHERES][2] = {
     { 0.62f, 0.42f },
     { 0.90f, 0.78f },
 
-    // Cercle 3 : rayon = 1.6 (24 briques)
+    // Circle 3
     {  1.586f,  0.991f },
     {  1.586f,  1.409f },
     {  1.478f,  1.812f },
@@ -121,7 +121,29 @@ float level2Pos[NUM_SPHERES][2] = {
 
     { 0.0f, -3.6f }
 };
-float level3Pos[NUM_SPHERES][2] = { { 0.0f, 1.6f}, { 2.0f, 1.6f}, {-2.0f, 0.8f}, { 0.0f, 0.8f}, { 2.0f, 0.8f},{ 0.0f, -3.6f } };
+float level3Pos[NUM_SPHERES][2] = { 
+
+    {-1.95f, 3.6f}, { -1.45f,  3.6f }, {-0.95f, 3.6f}, {-0.45f, 3.6f}, {0.0f, 3.6f}, {0.45f, 3.6f}, {0.95f, 3.6f}, {1.45f, 3.6f}, {1.95f, 3.6f},
+    
+    {-1.75f, 3.2f}, {-1.25f, 3.2f}, {-0.75f, 3.2f}, {-0.25f, 3.2f}, {0.25f, 3.2f}, {0.75f, 3.2f}, {1.25f, 3.2f}, {1.75f, 3.2f},
+
+    {-1.45f, 2.8f}, {-0.95f, 2.8f}, {-0.45f, 2.8f}, {0.0f, 2.8f}, {0.45f, 2.8f}, {0.95f, 2.8f}, {1.45f, 2.8f},
+
+    {-1.25f, 2.4f}, {-0.75f, 2.4f}, {-0.25f, 2.4f}, {0.25f, 2.4f}, {0.75f, 2.4f}, {1.25f, 2.4f},
+
+    {-0.95f, 2.0f}, {-0.45f, 2.0f}, {0.0f, 2.0f}, {0.45f, 2.0f}, {0.95f, 2.0f},
+
+    {-0.75f, 1.6f}, {-0.25f, 1.6f}, {0.25f, 1.6f}, {0.75f, 1.6f},
+
+    {-0.45f, 1.2f}, {0.0f, 1.2f}, {0.45f, 1.2f},
+
+    {-0.25f, 0.8f}, {0.25f, 0.8f}, 
+
+    {0.0f, 0.4f}, {0.0f, 0.4f}, {0.0f, 0.4f},
+
+    
+    { 0.0f, -3.6f }
+};
 float (*currentLevelPos)[2] = level1Pos;
 
 //------------------------------------------------------------
@@ -142,7 +164,14 @@ D3DXCOLOR sphereColorLevel2[NUM_SPHERES] = {
    d3d::RED, d3d::RED, d3d::RED, d3d::RED, d3d::RED, d3d::RED, d3d::RED, d3d::RED, d3d::RED, d3d::RED, d3d::RED, d3d::RED,
    d3d::WHITE
 }; 
-D3DXCOLOR sphereColorLevel3[NUM_SPHERES] = { d3d::RED, d3d::RED, d3d::YELLOW, d3d::BLUE, d3d::GREEN, d3d::BLUE, d3d::WHITE };
+D3DXCOLOR sphereColorLevel3[NUM_SPHERES] = {
+   d3d::GREEN, d3d::GREEN, d3d::GREEN, d3d::GREEN, d3d::GREEN, d3d::GREEN, d3d::GREEN, d3d::GREEN, d3d::GREEN, d3d::GREEN,
+   d3d::GREEN, d3d::GREEN, d3d::GREEN, d3d::GREEN, d3d::GREEN, d3d::GREEN, d3d::GREEN, d3d::GREEN, d3d::GREEN, d3d::GREEN,
+   d3d::GREEN, d3d::GREEN, d3d::GREEN, d3d::GREEN, d3d::GREEN, d3d::GREEN, d3d::GREEN, d3d::GREEN, d3d::GREEN, d3d::GREEN,
+   d3d::GREEN, d3d::GREEN, d3d::GREEN, d3d::GREEN, d3d::GREEN, d3d::GREEN, d3d::GREEN, d3d::GREEN, d3d::GREEN, d3d::GREEN,
+   d3d::GREEN, d3d::GREEN, d3d::GREEN, d3d::GREEN, d3d::GREEN, d3d::GREEN, d3d::GREEN, d3d::WHITE
+
+};
 D3DXCOLOR *sphereColor = sphereColorLevel1;
 
 // -----------------------------------------------------------------------------
