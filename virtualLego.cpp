@@ -39,7 +39,7 @@ const float BALL_SPEED_LEVEL3 = 7; // fast
 int ball_speed = BALL_SPEED_LEVEL1; //referenced in CSphere.cpp
 
 //------------------------------------------------------------
-// CONFIGURABLE NUMBER OF BRICKS
+// NUMBER OF BRICKS
 //------------------------------------------------------------
 const int NUM_BRICKS = 47;                   
 const int NUM_SPHERES = NUM_BRICKS + 1;      // (bricks + 1 player ball)
@@ -495,8 +495,22 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             }
             break;
         case 'R':
-            //Reset ball position
+            //Reset ball position, layout, score, and lives
         {
+            // Reset all bricks to initial positions
+            for (int i = 0; i < NUM_BRICKS; ++i)
+            {
+                g_brickDestroyed[i] = false;
+                g_sphere[i].setCenter(currentLevelPos[i][0], g_sphere[i].getRadius(), currentLevelPos[i][1]);
+                g_sphere[i].setPower(0, 0);
+            }
+            g_activeBricks = NUM_BRICKS;
+            g_lastMilestone = 0;  // Reset milestone counter
+
+            // Reset player lives
+            g_playerLives = 3;
+
+            // Reset ball position to paddle
             D3DXVECTOR3 p = g_target_blueball.getCenter();
             g_sphere[NUM_BRICKS].setCenter(p.x, g_sphere[NUM_BRICKS].getRadius(), p.z + 0.5f);
             g_sphere[NUM_BRICKS].setPower(0, 0);
