@@ -150,7 +150,7 @@ void CSphere::paddleHitBy(CSphere& ball) {
 void CSphere::greenTime(CSphere& ball) {
 	if (!ballClose(ball)) return;
 	ball.setPower(ball.getVelocity_X() * 1.5f, ball.getVelocity_Z() * 1.5f);
-    OutputDebugStringA("SPEED UP\n");
+    //OutputDebugStringA("SPEED UP\n");
 }
 
 void CSphere::ballUpdate(float timeDiff)

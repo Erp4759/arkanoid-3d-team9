@@ -187,7 +187,7 @@ bool Display(float timeDelta)
                     g_sphere[i].hitBy(g_sphere[NUM_BRICKS]);
                     g_brickDestroyed[i] = true;
                     g_activeBricks--;
-                    OutputDebugStringA("Destroyed brick\n");
+                    //OutputDebugStringA("Destroyed brick\n");
                 }
             }
 
@@ -195,7 +195,7 @@ bool Display(float timeDelta)
             D3DXVECTOR3 ballPos = g_sphere[NUM_BRICKS].getCenter();
             if (ballPos.z < -4.2)
             {
-                OutputDebugStringA("OUT\n");
+                //OutputDebugStringA("OUT\n");
                 D3DXVECTOR3 p = g_target_blueball.getCenter();
                 g_sphere[NUM_BRICKS].setCenter(p.x, g_sphere[NUM_BRICKS].getRadius(), p.z + 0.5f);
                 g_sphere[NUM_BRICKS].setPower(0, 0);
