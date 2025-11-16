@@ -16,10 +16,13 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cassert>
+#include <mmsystem.h>
 
 #include "CSphere.h"
 #include "CWall.h"
 #include "CLight.h"
+
+#pragma comment(lib, "winmm.lib")
 
 IDirect3DDevice9* Device = NULL;
 
@@ -30,9 +33,9 @@ const int Height = 768;
 // ------------------------------------------------------------
 // Per-level ball speed constants (used for player ball only)
 // ------------------------------------------------------------
-const int BALL_SPEED_LEVEL1 = 2.3; // slow
-const int BALL_SPEED_LEVEL2 = 2.5; // medium
-const int BALL_SPEED_LEVEL3 = 3; // fast
+const float BALL_SPEED_LEVEL1 = 2.3; // slow
+const float BALL_SPEED_LEVEL2 = 2.5; // medium
+const float BALL_SPEED_LEVEL3 = 3; // fast
 int ball_speed = BALL_SPEED_LEVEL1; //referenced in CSphere.cpp
 
 //------------------------------------------------------------
@@ -315,8 +318,11 @@ bool Display(float timeDelta)
                 g_legowall[j].hitBy(g_sphere[NUM_BRICKS]);
 
             // paddle
-            if (g_target_blueball.hasIntersected(g_sphere[NUM_BRICKS]))
+            if (g_target_blueball.hasIntersected(g_sphere[NUM_BRICKS])) {
                 g_target_blueball.paddleHitBy(g_sphere[NUM_BRICKS]);
+                // Play sound when paddle hits ball
+                PlaySound(TEXT("hit.wav"), NULL, SND_FILENAME | SND_ASYNC);
+            }
 
             // bricks collision
             for (int i = 0; i < NUM_BRICKS; ++i)
