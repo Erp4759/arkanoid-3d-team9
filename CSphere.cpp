@@ -56,6 +56,20 @@ bool CSphere::hasIntersected(CSphere& ball)
     return (distance < (this->getRadius() + ball.getRadius()));
 }
 
+bool CSphere::ballClose(CSphere& ball)
+{
+    D3DXVECTOR3 myCenter = this->getCenter();
+    D3DXVECTOR3 ballCenter = ball.getCenter();
+
+    float dx = myCenter.x - ballCenter.x;
+    float dy = myCenter.y - ballCenter.y;
+    float dz = myCenter.z - ballCenter.z;
+    float distance = sqrt(dx * dx + dy * dy + dz * dz);
+
+    return (distance < (this->getRadius() + ball.getRadius() + 0.5f));
+}
+
+
 void CSphere::hitBy(CSphere& ball)
 {
     if (!hasIntersected(ball)) return;
@@ -94,6 +108,52 @@ void CSphere::hitBy(CSphere& ball)
         ballCenter.z -= dz * overlap * 0.5f;
         ball.setCenter(ballCenter.x, ballCenter.y, ballCenter.z);
     }
+}
+
+
+void CSphere::paddleHitBy(CSphere& ball) {
+    if (!hasIntersected(ball)) return;
+
+    D3DXVECTOR3 myCenter = this->getCenter();
+    D3DXVECTOR3 ballCenter = ball.getCenter();
+
+    float offset = ballCenter.x - myCenter.x;
+
+    float maxOffset = 1.5f;
+    if (offset < -maxOffset) {
+        offset = -maxOffset;
+    }
+    if (offset > maxOffset) {
+        offset = maxOffset;
+    }
+
+    float t = offset / maxOffset;
+
+    float iniVx = (float)ball.getVelocity_X();
+    float iniVz = (float)ball.getVelocity_Z();
+    float iniSpeed = sqrt(iniVx * iniVx + iniVz * iniVz);
+    if (iniSpeed < 0.1f) iniSpeed = 3.0f;
+
+    float newDirX = t;
+    float newDirZ = 1.0f;
+    float len = sqrt(newDirX * newDirX + newDirZ * newDirZ);
+    if (len < 0.0001f) len = 1.0f;
+
+    newDirX /= len;
+    newDirZ /= len;
+    float newVx = newDirX * iniSpeed;
+    float newVz = newDirZ * iniSpeed;
+    ball.setPower(newVx, newVz);
+
+    ballCenter.z = myCenter.z + this->getRadius() + ball.getRadius() + 0.01f;
+    ball.setCenter(ballCenter.x, ballCenter.y, ballCenter.z);
+}
+
+
+void CSphere::greenTime(CSphere& ball) {
+    if (!ballClose(ball)) return;
+    ball.setPower(ball.getVelocity_X() * 1.5f, ball.getVelocity_Z() * 1.5f);
+    //OutputDebugStringA("SPEED UP\n");
 }
 
 void CSphere::ballUpdate(float timeDiff)

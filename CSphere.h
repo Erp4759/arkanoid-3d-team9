@@ -11,7 +11,7 @@ private:
 
     D3DXMATRIX   m_mLocal;
     D3DMATERIAL9 m_mtrl;
-    ID3DXMesh*   m_pSphereMesh;
+    ID3DXMesh* m_pSphereMesh;
 
 public:
     CSphere(void);
@@ -23,6 +23,9 @@ public:
 
     bool hasIntersected(CSphere& ball);
     void hitBy(CSphere& ball);
+    void paddleHitBy(CSphere& ball);
+    bool ballClose(CSphere& ball);
+    void greenTime(CSphere& ball);
 
     void ballUpdate(float timeDiff);
 
