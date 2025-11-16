@@ -177,7 +177,7 @@ bool Display(float timeDelta)
 
             // paddle
             if (g_target_blueball.hasIntersected(g_sphere[NUM_BRICKS]))
-                g_target_blueball.hitBy(g_sphere[NUM_BRICKS]);
+                g_target_blueball.paddleHitBy(g_sphere[NUM_BRICKS]);
 
             // bricks collision
             for (int i = 0; i < NUM_BRICKS; ++i)
@@ -284,6 +284,18 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                 g_sphere[NUM_BRICKS].setPower(horizontalPower, ball_speed);
                 g_ballLaunched = true;
             }
+            else {
+				g_target_blueball.greenTime(g_sphere[NUM_BRICKS]);
+            }
+            break;
+        case 'R':
+            //Reset ball position
+            {
+                D3DXVECTOR3 p = g_target_blueball.getCenter();
+                g_sphere[NUM_BRICKS].setCenter(p.x, g_sphere[NUM_BRICKS].getRadius(), p.z + 0.5f);
+                g_sphere[NUM_BRICKS].setPower(0, 0);
+                g_ballLaunched = false;
+		    }
             break;
         case VK_LEFT:
         case 'A':

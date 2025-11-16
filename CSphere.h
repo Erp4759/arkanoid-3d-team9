@@ -23,6 +23,9 @@ public:
 
     bool hasIntersected(CSphere& ball);
     void hitBy(CSphere& ball);
+    void paddleHitBy(CSphere& ball);
+	bool ballClose(CSphere& ball);
+	void greenTime(CSphere& ball);
 
     void ballUpdate(float timeDiff);
 
