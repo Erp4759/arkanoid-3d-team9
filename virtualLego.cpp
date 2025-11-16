@@ -209,6 +209,10 @@ bool g_ballLaunched = false;
 int  g_playerLives = 3;
 int  g_lastMilestone = 0;  // Track last milestone for win sound
 
+// Keyboard state for smooth movement
+bool g_keyLeft = false;
+bool g_keyRight = false;
+
 // Font for rendering text
 ID3DXFont* g_pFont = NULL;
 
@@ -309,6 +313,29 @@ bool Display(float timeDelta)
     if (Device) {
         Device->Clear(0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0x00afafaf, 1.0f, 0);
         Device->BeginScene();
+
+        // Handle continuous paddle movement
+        if (g_keyLeft || g_keyRight) {
+            D3DXVECTOR3 coord = g_target_blueball.getCenter();
+            float moveSpeed = 0.10f; // Adjust this value for speed
+            
+            if (g_keyLeft) {
+                float newX = coord.x - moveSpeed;
+                float r = g_target_blueball.getRadius();
+                float minX = -3.0f + r;
+                if (newX > minX) {
+                    g_target_blueball.setCenter(newX, coord.y, -3.6f);
+                }
+            }
+            if (g_keyRight) {
+                float newX = coord.x + moveSpeed;
+                float r = g_target_blueball.getRadius();
+                float maxX = 3.0f - r;
+                if (newX < maxX) {
+                    g_target_blueball.setCenter(newX, coord.y, -3.6f);
+                }
+            }
+        }
 
         // Update ball physics only if launched
         if (g_ballLaunched) {
@@ -478,27 +505,23 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         break;
         case VK_LEFT:
         case 'A':
-            {
-                D3DXVECTOR3 coord = g_target_blueball.getCenter();
-                float newX = coord.x - 0.15f;
-                float r = g_target_blueball.getRadius();
-                float minX = -3.0f + r;
-                if (newX > minX) {
-                    g_target_blueball.setCenter(newX, coord.y, -3.6f);
-                }
-            }
+            g_keyLeft = true;
             break;
         case VK_RIGHT:
         case 'D':
-            {
-                D3DXVECTOR3 coord = g_target_blueball.getCenter();
-                float newX = coord.x + 0.15f;
-                float r = g_target_blueball.getRadius();
-                float maxX = 3.0f - r;
-                if (newX < maxX) {
-                    g_target_blueball.setCenter(newX, coord.y, -3.6f);
-                }
-            }
+            g_keyRight = true;
+            break;
+        }
+        break;
+    case WM_KEYUP:
+        switch (wParam) {
+        case VK_LEFT:
+        case 'A':
+            g_keyLeft = false;
+            break;
+        case VK_RIGHT:
+        case 'D':
+            g_keyRight = false;
             break;
         }
         break;
