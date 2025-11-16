@@ -33,9 +33,9 @@ const int Height = 768;
 // ------------------------------------------------------------
 // Per-level ball speed constants (used for player ball only)
 // ------------------------------------------------------------
-const float BALL_SPEED_LEVEL1 = 2.3; // slow
-const float BALL_SPEED_LEVEL2 = 2.5; // medium
-const float BALL_SPEED_LEVEL3 = 3; // fast
+const float BALL_SPEED_LEVEL1 = 5; // slow
+const float BALL_SPEED_LEVEL2 = 6; // medium
+const float BALL_SPEED_LEVEL3 = 7; // fast
 int ball_speed = BALL_SPEED_LEVEL1; //referenced in CSphere.cpp
 
 //------------------------------------------------------------
@@ -207,6 +207,7 @@ bool g_brickDestroyed[NUM_BRICKS] = {false};
 int  g_activeBricks = NUM_BRICKS;
 bool g_ballLaunched = false;
 int  g_playerLives = 3;
+int  g_lastMilestone = 0;  // Track last milestone for win sound
 
 // Font for rendering text
 ID3DXFont* g_pFont = NULL;
@@ -332,6 +333,14 @@ bool Display(float timeDelta)
                     g_sphere[i].hitBy(g_sphere[NUM_BRICKS]);
                     g_brickDestroyed[i] = true;
                     g_activeBricks--;
+                    
+                    // Check if reached milestone (every 10 destroyed)
+                    int destroyed = NUM_BRICKS - g_activeBricks;
+                    int currentMilestone = destroyed / 10;
+                    if (currentMilestone > g_lastMilestone) {
+                        g_lastMilestone = currentMilestone;
+                        PlaySound(TEXT("win.wav"), NULL, SND_FILENAME | SND_ASYNC);
+                    }
                 }
             }
 
@@ -364,6 +373,7 @@ bool Display(float timeDelta)
                     g_sphere[i].setPower(0, 0);
                 }
                 g_activeBricks = NUM_BRICKS;
+                g_lastMilestone = 0;  // Reset milestone counter
 
                 D3DXVECTOR3 p = g_target_blueball.getCenter();
                 g_sphere[NUM_BRICKS].setCenter(p.x, g_sphere[NUM_BRICKS].getRadius(), p.z + 0.5f);
@@ -400,6 +410,14 @@ bool Display(float timeDelta)
             char lifeText[32];
             sprintf_s(lifeText, "Lives: %d", g_playerLives);
             g_pFont->DrawTextA(NULL, lifeText, -1, &rect, DT_LEFT | DT_TOP, D3DCOLOR_XRGB(255, 255, 255));
+            
+            // draw score text on the right side
+            RECT scoreRect;
+            SetRect(&scoreRect, 0, 10, Width - 20, Height);
+            char scoreText[64];
+            int destroyed = NUM_BRICKS - g_activeBricks;
+            sprintf_s(scoreText, "Destroyed: %d/%d", destroyed, NUM_BRICKS);
+            g_pFont->DrawTextA(NULL, scoreText, -1, &scoreRect, DT_RIGHT | DT_TOP, D3DCOLOR_XRGB(255, 255, 255));
         }
 
         Device->EndScene();

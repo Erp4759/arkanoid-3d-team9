@@ -161,7 +161,7 @@ int d3d::EnterMsgLoop( bool (*ptr_display)(float timeDelta) )
 		else
         {	
 			double currTime  = (double)timeGetTime();
-			double timeDelta = (currTime - lastTime)*0.0007;
+			double timeDelta = (currTime - lastTime)*0.00035;
 			ptr_display((float)timeDelta);
 
 			lastTime = currTime;
