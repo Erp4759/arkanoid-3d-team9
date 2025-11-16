@@ -27,6 +27,14 @@ IDirect3DDevice9* Device = NULL;
 const int Width  = 1024;
 const int Height = 768;
 
+// ------------------------------------------------------------
+// Per-level ball speed constants (used for player ball only)
+// ------------------------------------------------------------
+const int BALL_SPEED_LEVEL1 = 2.3; // slow
+const int BALL_SPEED_LEVEL2 = 2.5; // medium
+const int BALL_SPEED_LEVEL3 = 3; // fast
+int ball_speed = BALL_SPEED_LEVEL1; //referenced in CSphere.cpp
+
 //------------------------------------------------------------
 // CONFIGURABLE NUMBER OF BRICKS
 //------------------------------------------------------------
@@ -189,7 +197,6 @@ CWall   g_legowall[3];
 CSphere g_sphere[NUM_SPHERES];
 CSphere g_target_blueball;
 CLight  g_light;
-int ball_speed = 2;
 double g_camera_pos[3] = {0.0, 5.0, -8.0};
 
 // Game state variables
@@ -429,7 +436,7 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                 float offset = ballPos.x - paddlePos.x;
                 float horizontalPower = offset * 1.0f; // Adjust multiplier for more/less angle
 
-                g_sphere[NUM_BRICKS].setPower(horizontalPower, ball_speed);
+                g_sphere[NUM_BRICKS].setPower(horizontalPower, (float)ball_speed); // use global speed
                 g_ballLaunched = true;
             }
             else {
@@ -513,7 +520,6 @@ int WINAPI WinMain(HINSTANCE hinstance, HINSTANCE prevInstance, PSTR cmdLine, in
 {
     srand(static_cast<unsigned int>(time(NULL)));
 
-    // Ask level with MessageBox
     int level = 1;
     int answer = MessageBox(
         0,
@@ -530,9 +536,9 @@ int WINAPI WinMain(HINSTANCE hinstance, HINSTANCE prevInstance, PSTR cmdLine, in
     default: level = 1; break;
     }
     switch (level) {
-    case 1: currentLevelPos = level1Pos; sphereColor = sphereColorLevel1; break;
-    case 2: currentLevelPos = level2Pos; sphereColor = sphereColorLevel2; break;
-    case 3: currentLevelPos = level3Pos; sphereColor = sphereColorLevel3; break;
+    case 1: currentLevelPos = level1Pos; sphereColor = sphereColorLevel1; ball_speed = BALL_SPEED_LEVEL1; break;
+    case 2: currentLevelPos = level2Pos; sphereColor = sphereColorLevel2; ball_speed = BALL_SPEED_LEVEL2; break;
+    case 3: currentLevelPos = level3Pos; sphereColor = sphereColorLevel3; ball_speed = BALL_SPEED_LEVEL3; break;
     }
 
     if (!d3d::InitD3D(hinstance, Width, Height, true, D3DDEVTYPE_HAL, &Device)) {

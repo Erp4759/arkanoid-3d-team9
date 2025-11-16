@@ -4,6 +4,9 @@
 #define M_RADIUS 0.21f
 #define DECREASE_RATE 0.9982f
 
+// Added: reference global level-dependent speed
+extern int ball_speed;
+
 CSphere::CSphere(void)
 {
     D3DXMatrixIdentity(&m_mLocal);
@@ -132,7 +135,7 @@ void CSphere::paddleHitBy(CSphere& ball) {
     float iniVx = (float)ball.getVelocity_X();
     float iniVz = (float)ball.getVelocity_Z();
     float iniSpeed = sqrt(iniVx * iniVx + iniVz * iniVz);
-    if (iniSpeed < 0.1f) iniSpeed = 3.0f;
+    if (iniSpeed < 0.1f) iniSpeed = (float)ball_speed; // use level speed if very slow
 
     float newDirX = t;
     float newDirZ = 1.0f;
@@ -141,8 +144,10 @@ void CSphere::paddleHitBy(CSphere& ball) {
 
     newDirX /= len;
     newDirZ /= len;
-    float newVx = newDirX * iniSpeed;
-    float newVz = newDirZ * iniSpeed;
+    // enforce constant magnitude based on level speed
+    float targetSpeed = (float)ball_speed;
+    float newVx = newDirX * targetSpeed;
+    float newVz = newDirZ * targetSpeed;
     ball.setPower(newVx, newVz);
 
     ballCenter.z = myCenter.z + this->getRadius() + ball.getRadius() + 0.01f;
@@ -152,6 +157,7 @@ void CSphere::paddleHitBy(CSphere& ball) {
 
 void CSphere::greenTime(CSphere& ball) {
     if (!ballClose(ball)) return;
+    // Keep direction but boost speed temporarily (could exceed constant speed until next update normalizes)
     ball.setPower(ball.getVelocity_X() * 1.5f, ball.getVelocity_Z() * 1.5f);
     //OutputDebugStringA("SPEED UP\n");
 }
@@ -160,19 +166,26 @@ void CSphere::ballUpdate(float timeDiff)
 {
     const float TIME_SCALE = 3.3f;
     D3DXVECTOR3 cord = getCenter();
-    double vx = fabs(getVelocity_X());
-    double vz = fabs(getVelocity_Z());
+    float vx = m_velocity_x;
+    float vz = m_velocity_z;
+    float speed = sqrtf(vx * vx + vz * vz);
 
-    if (vx > 0.01 || vz > 0.01) {
+    if (speed > 0.0001f) {
+        // normalize
+        float nx = vx / speed;
+        float nz = vz / speed;
+        // enforce constant speed based on level
+        float targetSpeed = (float)ball_speed;
+        m_velocity_x = nx * targetSpeed;
+        m_velocity_z = nz * targetSpeed;
+
         float tX = cord.x + TIME_SCALE * timeDiff * m_velocity_x;
         float tZ = cord.z + TIME_SCALE * timeDiff * m_velocity_z;
         setCenter(tX, cord.y, tZ);
     } else {
         setPower(0, 0);
     }
-    double rate = 1;//1 - (1 - DECREASE_RATE) * timeDiff * 400;
-    if (rate < 0) rate = 0;
-    setPower(getVelocity_X() * rate, getVelocity_Z() * rate);
+    // Removed decay logic to keep constant speed
 }
 
 double CSphere::getVelocity_X() const { return m_velocity_x; }
