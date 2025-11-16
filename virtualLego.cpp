@@ -185,7 +185,7 @@ D3DXMATRIX g_mProj;
 // Global variables
 // -----------------------------------------------------------------------------
 CWall   g_legoPlane;
-CWall   g_legowall[4];
+CWall   g_legowall[3];
 CSphere g_sphere[NUM_SPHERES];
 CSphere g_target_blueball;
 CLight  g_light;
@@ -196,6 +196,10 @@ double g_camera_pos[3] = {0.0, 5.0, -8.0};
 bool g_brickDestroyed[NUM_BRICKS] = {false};
 int  g_activeBricks = NUM_BRICKS;
 bool g_ballLaunched = false;
+int  g_playerLives = 3;
+
+// Font for rendering text
+ID3DXFont* g_pFont = NULL;
 
 // -----------------------------------------------------------------------------
 // Functions
@@ -209,19 +213,32 @@ bool Setup()
     D3DXMatrixIdentity(&g_mView);
     D3DXMatrixIdentity(&g_mProj);
 
+    // initialize the font for life display on screen (top left)
+    D3DXCreateFont(
+        Device,
+        24,                    // Height
+        0,                     // Width
+        FW_BOLD,              // Weight
+        1,                     // MipLevels
+        FALSE,                // Italic
+        DEFAULT_CHARSET,      // CharSet
+        OUT_DEFAULT_PRECIS,   // OutputPrecision
+        DEFAULT_QUALITY,      // Quality
+        DEFAULT_PITCH | FF_DONTCARE, // PitchAndFamily (everything default basically)
+        "Arial",              // police used
+        &g_pFont);
+
     // vertical field plane (width 6, depth 9)
     if (!g_legoPlane.create(Device, -1, -1, 6.0f, 0.03f, 9.0f, d3d::GREEN)) return false;
     g_legoPlane.setPosition(0.0f, -0.0006f / 5, 0.0f);
 
-    // walls
+    // walls (only top, left, right with no bottom wall)
     if (!g_legowall[0].create(Device, -1, -1, 6.0f, 0.3f, 0.12f, d3d::DARKRED)) return false; // top
     g_legowall[0].setPosition(0.0f, 0.12f, 4.56f);
-    if (!g_legowall[1].create(Device, -1, -1, 6.0f, 0.3f, 0.12f, d3d::DARKRED)) return false; // bottom
-    g_legowall[1].setPosition(0.0f, 0.12f, -4.56f);
-    if (!g_legowall[2].create(Device, -1, -1, 0.12f, 0.3f, 9.24f, d3d::DARKRED)) return false; // right
-    g_legowall[2].setPosition(3.06f, 0.12f, 0.0f);
-    if (!g_legowall[3].create(Device, -1, -1, 0.12f, 0.3f, 9.24f, d3d::DARKRED)) return false; // left
-    g_legowall[3].setPosition(-3.06f, 0.12f, 0.0f);
+    if (!g_legowall[1].create(Device, -1, -1, 0.12f, 0.3f, 9.24f, d3d::DARKRED)) return false; // right
+    g_legowall[1].setPosition(3.06f, 0.12f, 0.0f);
+    if (!g_legowall[2].create(Device, -1, -1, 0.12f, 0.3f, 9.24f, d3d::DARKRED)) return false; // left
+    g_legowall[2].setPosition(-3.06f, 0.12f, 0.0f);
 
     for (i = 0; i < NUM_SPHERES; ++i)
     {
@@ -267,9 +284,13 @@ bool Setup()
 void Cleanup(void)
 {
     g_legoPlane.destroy();
-    for (int i = 0; i < 4; ++i) g_legowall[i].destroy();
+    for (int i = 0; i < 3; ++i) g_legowall[i].destroy();
     destroyAllLegoBlock();
     g_light.destroy();
+    if (g_pFont) {
+        g_pFont->Release();
+        g_pFont = NULL;
+    }
 }
 
 bool Display(float timeDelta)
@@ -283,7 +304,7 @@ bool Display(float timeDelta)
             g_sphere[NUM_BRICKS].ballUpdate(timeDelta); // last sphere = player ball
 
             // walls
-            for (int j = 0; j < 4; ++j)
+            for (int j = 0; j < 3; ++j)
                 g_legowall[j].hitBy(g_sphere[NUM_BRICKS]);
 
             // paddle
@@ -301,14 +322,23 @@ bool Display(float timeDelta)
                 }
             }
 
-            // ball fell bottom
+            // ball fell bottom == lose a life
             D3DXVECTOR3 ballPos = g_sphere[NUM_BRICKS].getCenter();
-            if (ballPos.z < -4.5f)
+            if (ballPos.z < -4.8f)  // threshold for losing ball
             {
-                D3DXVECTOR3 p = g_target_blueball.getCenter();
-                g_sphere[NUM_BRICKS].setCenter(p.x, g_sphere[NUM_BRICKS].getRadius(), p.z + 0.5f);
-                g_sphere[NUM_BRICKS].setPower(0, 0);
-                g_ballLaunched = false;
+                g_playerLives--;  // Lose a life
+
+                if (g_playerLives <= 0) {
+                    // game over == return to level selection
+                    PostQuitMessage(0);
+                }
+                else {
+                    // reset ball position, back to base point
+                    D3DXVECTOR3 p = g_target_blueball.getCenter();
+                    g_sphere[NUM_BRICKS].setCenter(p.x, g_sphere[NUM_BRICKS].getRadius(), p.z + 0.5f);
+                    g_sphere[NUM_BRICKS].setPower(0, 0);
+                    g_ballLaunched = false;
+                }
             }
 
             // all bricks destroyed → respawn
@@ -337,7 +367,7 @@ bool Display(float timeDelta)
 
         // draw world
         g_legoPlane.draw(Device, g_mWorld);
-        for (int i = 0; i < 4; ++i)
+        for (int i = 0; i < 3; ++i)
             g_legowall[i].draw(Device, g_mWorld);
 
         // draw bricks
@@ -349,6 +379,15 @@ bool Display(float timeDelta)
         g_sphere[NUM_BRICKS].draw(Device, g_mWorld);
         g_target_blueball.draw(Device, g_mWorld);
         g_light.draw(Device);
+
+        // draw life count text
+        if (g_pFont) {
+            RECT rect;
+            SetRect(&rect, 10, 10, Width, Height);
+            char lifeText[32];
+            sprintf_s(lifeText, "Lives: %d", g_playerLives);
+            g_pFont->DrawTextA(NULL, lifeText, -1, &rect, DT_LEFT | DT_TOP, D3DCOLOR_XRGB(255, 255, 255));
+        }
 
         Device->EndScene();
         Device->Present(0, 0, 0, 0);
